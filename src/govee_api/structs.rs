@@ -1,11 +1,17 @@
-use serde::{Serialize, Deserialize};
-use crate::govee_api::enums::Cmd;
+use serde::Deserialize;
 
 #[derive(Deserialize, Debug)]
 pub struct DeviceListResult {
     data: GoveeDevices,
     message: String,
     code: i32,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct DeviceControlResult {
+    code: i32,
+    message: String,
+    data: serde_json::Value,
 }
 
 #[derive(Deserialize, Clone, Debug)]
@@ -23,21 +29,6 @@ pub struct GoveeDevice {
     retrievable: bool,
     support_cmds: Vec<String>,
 }
-
-#[derive(Serialize, Debug)]
-pub struct GoveeAction {
-    device: String,
-    model: String,
-    cmd: GoveeCmd,
-}
-
-#[derive(Serialize, Debug)]
-pub struct GoveeCmd {
-    name: String,
-    value: String,
-}
-
-
 
 impl DeviceListResult {
     pub fn data(&self) -> &GoveeDevices {
@@ -72,15 +63,15 @@ impl GoveeDevices {
 }
 
 impl GoveeDevice {
-    pub fn name(&self) -> &str {
+    pub fn device_name(&self) -> &String {
         &self.device_name
     }
 
-    pub fn address(&self) -> &str {
+    pub fn device(&self) -> &String {
         &self.device
     }
 
-    pub fn model(&self) -> &str {
+    pub fn model(&self) -> &String {
         &self.model
     }
 
@@ -94,16 +85,5 @@ impl GoveeDevice {
 
     pub fn support_cmds(&self) -> &Vec<String> {
         &self.support_cmds
-    }
-
-    pub fn action(&self, cmd: Cmd, value: String) -> GoveeAction {
-        GoveeAction {
-            device: self.device.to_owned(),
-            model: self.model.to_owned(),
-            cmd: GoveeCmd {
-                name: cmd.value().to_owned(),
-                value,
-            }
-        }
     }
 }

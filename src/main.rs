@@ -1,6 +1,6 @@
 extern crate reqwest;
 
-use crate::govee_api::{GoveeAPI, enums::Cmd};
+use crate::govee_api::{GoveeAPI, command::GoveeColor};
 
 mod govee_api;
 mod config;
@@ -11,12 +11,13 @@ fn main() {
     let mut devices = api.get_devices().unwrap().unwrap();
     let aura = devices.get_by_name("Aura").unwrap();
 
-    let action = aura.action(Cmd::Turn, "on".to_owned());
+    //api.turn(&aura, "on").unwrap();
 
-    let s = api.control(&action).unwrap();
+    let red = GoveeColor::new(255, 0, 0);
+
+    let c = api.color(&aura, &red).unwrap();
 
     println!("{:?}", devices);
     println!("{:?}", aura);
-    println!("{}", s);
-    println!("{:?}", action);
+    println!("{:?}", c);
 }
